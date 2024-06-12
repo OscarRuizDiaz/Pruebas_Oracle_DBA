@@ -1,0 +1,156 @@
+--CREACION DE TABLAS POR LINEA DE COMANDOS
+
+--TABLE DE CATEGORIAS
+--UN DETALLE, DEACUERDO A LA VERSION DE ORACLE EL TIPO DE DATOS "INT" LO RECONOCE COMO "NUMBER"
+CREATE TABLE TB_CATEGORIAS
+(codigo_ca NUMBER(4,0),
+descripcion_ca VARCHAR(36));
+
+--AGREGAMOS CLAVES PRIMARIAS
+
+ALTER TABLE TB_CATEGORIAS ADD PRIMARY KEY (codigo_ca);
+
+--EMPEZAREMOS ALTENANDO ALGUNOS CAMPOS DE LA TABLA CATEGORIAS / CON ESTO LOGRAMOS ALGUNAS MODIFICACIONES COMO POR EJEMPLO
+ALTER TABLE TB_CATEGORIAS MODIFY (codigo_ca NOT NULL);
+ALTER TABLE TB_CATEGORIAS MODIFY (descripcion_ca NOT NULL);
+
+
+----------------------------------------------------------------
+--TABLE DE MEDIDAS
+
+--AGREGAMOS CLAVES PRIMARIAS
+
+ALTER TABLE TB_MEDIDAS ADD PRIMARY KEY (codigo_me);
+
+CREATE TABLE TB_MEDIDAS(
+codigo_me NUMBER (3,0),
+abreviatura_me VARCHAR2 (3), 
+descripcion_me VARCHAR2(20));
+
+
+--EMPEZAREMOS ALTENANDO ALGUNOS CAMPOS DE LA TABLA MEDIDAS / CON ESTO LOGRAMOS ALGUNAS MODIFICACIONES COMO POR EJEMPLO
+ALTER TABLE TB_MEDIDAS MODIFY (codigo_me NOT NULL);
+
+ALTER TABLE TB_MEDIDAS MODIFY descripcion_me VARCHAR2(30);
+
+
+----------------------------------------------------------------
+--- TABLA ARTICULOS
+
+--AGREGAMOS CLAVES PRIMARIAS
+
+ALTER TABLE TB_ARTICULOS ADD PRIMARY KEY (codigo_ar);
+
+--VALMOS ALTERAR LA TABLA PARA AGREGAR UNA COLUMNA
+ALTER TABLE TB_ARTICULOS ADD marca_ar VARCHAR2(30);
+
+ALTER TABLE TB_ARTICULOS ADD(
+codigo_me NUMBER(3,0),
+codigo_ca NUMBER(4,0));
+ 
+--CREACION TABLA ALTERNATIVA
+CREATE TABLE TB_ARTICULOS(
+codigo_ar NUMBER(6,0),
+descrpcion_ar VARCHAR2(50),
+marca_ar VARCHAR(30));
+
+-------------------------AQUI AGREGAMOS LA CLAVE FORANEA
+
+ALTER TABLE TB_ARTICULOS
+ADD CONSTRAINT FR_01
+FOREIGN KEY (codigo_me)
+REFERENCES TB_MEDIDAS (codigo_me);
+
+
+ALTER TABLE TB_ARTICULOS
+ADD CONSTRAINT FR_0
+FOREIGN KEY (codigo_ca)
+REFERENCES TB_CATEGORIAS (codigo_ca);
+
+--EMPEZAREMOS ALTENANDO ALGUNOS CAMPOS DE LA TABLA ARTICULOS / CON ESTO LOGRAMOS ALGUNAS MODIFICACIONES COMO POR EJEMPLO
+ALTER TABLE TB_ARTICULOS MODIFY (codigo_ar NOT NULL);
+
+----ELIMINAR UNA COLUMNA DE UNA TABLA
+ALTER TABLE TB_ARTICULOS DROP COLUMN marca_ar;
+-----------------------------------------------------
+---MODIFICAMOS UNA COLUMNA PARA QUE TENGA POR DEFECTO EL DEFAULT
+
+ALTER TABLE TB_ARTICULOS MODIFY codigo_ar NUMBER(6,0) DEFAULT 0;
+ALTER TABLE TB_CATEGORIAS MODIFY codigo_CA NUMBER(4,0) DEFAULT 0;
+ALTER TABLE TB_MEDIDAS MODIFY codigo_me NUMBER(3,0) DEFAULT 0;
+
+CREATE TABLE TB_ARTICULOS(
+codigo_ar VARCHAR2(50),
+marca VARCHAR(30),
+codigo_me NUMBER(3,0),
+codigo_ca NUMBER(4,0),
+fecha_ing DATE,
+stock_actual DECIMAL(10,2));
+
+----------------------------------------------------------------
+
+
+---ELIMINAR TABLAS EN UNA BASE DE DATOS
+
+DROP TABLE TB_MEDIDAS;
+DROP TABLE TB_CATEGORIAS;
+DROP TABLE TB_ARTICULOS;
+
+
+---CREAMOS LA TABLA TB_ALMACENES()
+
+
+CREATE TABLE TB_ALMACENES(
+codigo_al NUMBER (2,0) GENERATED ALWAYS AS IDENTITY,
+descripcion_al VARCHAR2(30));
+
+---------------------AGREGAMMOS INFORMACION----------------------
+INSERT INTO tb_categorias(codigo_ca,descripcion_ca)
+VALUES(1,'OFICINAS');
+
+INSERT INTO tb_categorias(codigo_ca,descripcion_ca)
+VALUES(2,'HOGARES');
+
+INSERT INTO tb_categorias(codigo_ca,descripcion_ca)
+VALUES(3,'EVENTOS');
+
+----INSERTAMOS DATOS EN LA TABLA MEDIDAS----
+INSERT INTO tb_medidas(codigo_me,abreviatura_me,descripcion_me)
+VALUES(1,'UND','UNIDADES');
+
+INSERT INTO tb_medidas(codigo_me,abreviatura_me,descripcion_me)
+VALUES(3,'MTS','METROS');
+
+INSERT INTO tb_medidas(codigo_me,abreviatura_me,descripcion_me)
+VALUES(4,'LTS','LITROS');
+
+--------INSERTAMOS REGISTROS EN LA TABLA ARTICULOS
+
+
+INSERT INTO tb_articulos(codigo_ar,descrpcion_ar,marca_ar,codigo_me,codigo_ca)
+VALUES(1,'COMPUTADOR','LENOVO',1,1);
+
+INSERT INTO tb_articulos(codigo_ar,descrpcion_ar,marca_ar,codigo_me,codigo_ca)
+VALUES(2,'IMPRESORAS','HP',1,1);
+
+INSERT INTO tb_articulos(codigo_ar,descrpcion_ar,marca_ar,codigo_me,codigo_ca)
+VALUES(3,'REFRIGERADOR','LG',1,2);
+
+INSERT INTO tb_articulos(codigo_ar,descrpcion_ar,marca_ar,codigo_me,codigo_ca)
+VALUES(4,'MICROONDAS','LENOVO',1,1);
+
+INSERT INTO tb_articulos(codigo_ar,descrpcion_ar,marca_ar,codigo_me,codigo_ca)
+VALUES(6,'ESCRITORIO','STANDAR',1,1);
+
+
+-----ACTUALIZAR DATOS UPDATE
+
+UPDATE tb_articulos SET marca_ar='CANON' WHERE codigo_ar=2;
+
+UPDATE tb_articulos SET marca_ar='SAMSUNG' WHERE codigo_ar IN (3,4);
+
+----AGREGAR concatenacion de datos
+
+UPDATE tb_articulos SET descrpcion_ar=CONCAT('* ',descrpcion_ar)  WHERE marca_ar='STANDAR';
+
+
